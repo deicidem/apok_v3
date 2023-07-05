@@ -1,0 +1,102 @@
+// ___TEXT___
+$color-main-dark: #000000;
+$color-main: #000000;
+$color-main-light: #000000;
+$color-main-white: #000000;
+$background-image: #000000;
+
+@if $VITE_THEME == 'katod' {
+  $color-main-dark: #488589;
+  $color-main: #6ba2a6;
+  $color-main-light: #90c0c4;
+  $color-main-white: #f6f9fa;
+  $background-image: url('@/assets/img/background/katod.png');
+} @else if $VITE_THEME == 'apok' {
+  $color-main-dark: #197697;
+  $color-main: #46a1bf;
+  $color-main-light: #76cfe9;
+  $color-main-white: #eff5f7;
+  $background-image: url('@/assets/img/background/apok.png');
+} @else {
+  $color-main-dark: #56678c;
+  $color-main: #899cc5;
+  $color-main-light: #9aaed9;
+  $color-main-white: #f0f2f7;
+  $background-image: url('@/assets/img/background/avim.png');
+}
+
+// Green
+//
+
+// Purple
+
+// Blue
+
+// $color-main-dark: #56678c;
+// $color-main: #899cc5;
+// $color-main-light: #9aaed9;
+// $color-main-white: #585d6a;
+
+//Pink
+// $color-main-dark: #654ea3;
+// $color-main: #a77eb5;
+// $color-main-light: #cdb0d6;
+// $color-main-white: #f0f2f7;
+
+//Yellow
+// $color-main-dark: #af8a5a;
+// $color-main: #ccab7e;
+// $color-main-light: #eacda3;
+// $color-main-white: #f8f3ec;
+
+//Orange
+// $color-main-dark: #D1913C;
+// $color-main: #e8b167;
+// $color-main-light: #FFD194;
+// $color-main-white: #f8f3ed;
+
+// Green
+// $color-main-dark: #128327 ;
+// $color-main: #3fad54;
+// $color-main-light: #70db84 ;
+// $color-main-white: #ecf7ee;
+
+// $color-main-dark: #464646;
+// $color-main: #6e6e6e;
+// $color-main-light: #949494;
+// $color-main-white: #f1f1f1;
+
+$text-grey: #333333;
+$text-grey-light: #aaaaaa;
+
+$text-plum: #899cc5;
+$text-yellow: #e7b160;
+$text-blue: #46a1bf;
+$text-green: #6ba2a6;
+
+$white: #fff;
+$black: #000;
+$white-dark: #edecec;
+
+// $white: #494949;
+// $black: #fff;
+// $white-dark: #3c3c3c;
+
+// ___BACKGROUND___
+$gradient: linear-gradient(88.64deg, $color-main-light 0%, $color-main-dark 100%); // Main gradient
+$gradient-w: linear-gradient(101.61deg, $white 0%, $color-main-white 100%); // White gradient
+$gradient-r: linear-gradient(91.36deg, #f07a7a 0%, #a54949 100%); // Red gradient
+// $gradient-b: linear-gradient(88.64deg, $text-blue 0%, #7571a3 100%); // Purple gradient
+// $gradient-p: linear-gradient(88.64deg, $text-plum 0%, #a85a75 100%); // Blue gradient
+$gradient-b: linear-gradient(101.61deg, #9aaed9 0%, #56678c 100%); // Purple gradient
+$gradient-p: linear-gradient(101.61deg, #d38fba 0%, #754363 100%); // Blue gradient
+$gradient-g: linear-gradient(101.61deg, #90c0c4 0%, #488589 100%); // Blue gradient
+$color-green: #42b76b;
+$color-red: #df4b4b;
+// $color-red: #e16d6d;
+$shadow-big: 0px 4px 10px rgba(0, 0, 0, 0.15);
+$shadow-small: 0px 2px 4px rgba(0, 0, 0, 0.15);
+$icon-hover: #659093;
+
+//___ALERT___
+$color-notification-access: linear-gradient(88.64deg, #c2e3ea 0%, #467f8b 100%);

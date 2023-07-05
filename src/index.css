@@ -1,0 +1,7 @@
+
+
+@import "@/assets/fonts/FluentUI-Icons/FluentSystemIcons-Resizable.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
