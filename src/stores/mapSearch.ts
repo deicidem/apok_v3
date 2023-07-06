@@ -1,35 +1,37 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import * as coordinatesParses from '@/helpers/coordinates';
-import * as L from 'leaflet';
-import '@geoman-io/leaflet-geoman-free';
+import L from 'leaflet';
 import type { AreaPolygon, CirclePolygon, FilePolygon } from '@/models/SearchMapPolygon';
+import circleToPolygon from '@/helpers/circleToPolygon';
+
+
 export const useMapSearchStore = defineStore('mapSearch', () => {
-  const areaPolygon = ref<AreaPolygon>({
-    geometry: null,
+  const areaPolygon = reactive<AreaPolygon>({
+    geometry: [],
     drawable: false,
     active: true,
   });
-  const circlePolygon = ref<CirclePolygon>({
+  const circlePolygon = reactive<CirclePolygon>({
     geometry: null,
     drawable: false,
     active: false,
     center: {},
   });
-  const filePolygon = ref<FilePolygon>({
+  const filePolygon = reactive<FilePolygon>({
     geometry: null,
     active: false,
   });
 
   const getActivePolygonJson = computed(() => {
     let json = null;
-    if (areaPolygon.value.active && areaPolygon.value.geometry) {
-      json = areaPolygon.value.geometry.toGeoJSON();
-    } else if (circlePolygon.value.active && circlePolygon.value.geometry) {
-      const circle = circlePolygon.value.geometry;
-      json = L.PM.Utils.circleToPolygon(circle, 60).toGeoJSON();
-    } else if (filePolygon.value.active && filePolygon.value.geometry) {
-      json = filePolygon.value.geometry.toGeoJSON();
+    if (areaPolygon.active && areaPolygon.geometry) {
+      json = L.polygon(areaPolygon.geometry).toGeoJSON();
+    } else if (circlePolygon.active && circlePolygon.geometry) {
+      const circle: L.Circle<any> = circlePolygon.geometry as L.Circle;
+      json = circleToPolygon(circle).toGeoJSON();
+    } else if (filePolygon.active && filePolygon.geometry) {
+      json = filePolygon.geometry.toGeoJSON();
     } else {
       return null;
     }
@@ -37,33 +39,43 @@ export const useMapSearchStore = defineStore('mapSearch', () => {
   });
 
   const getAreaPolygonFormattedCoordinates = computed(() => {
-    return areaPolygon.value.geometry?.getLatLngs().map((el: L.LatLngLiteral) => {
+    return areaPolygon.geometry.map((el) => {
+      const coordinate = el as L.LatLngLiteral;
       return {
-        lat: coordinatesParses.parseLatToDegrees(el.lat),
-        lng: coordinatesParses.parseLngToDegrees(el.lng),
+        lat: coordinatesParses.parseLatToDegrees(coordinate.lat),
+        lng: coordinatesParses.parseLngToDegrees(coordinate.lng),
       };
     });
   });
 
   const addCoordinate = (coordinate: L.LatLng) => {
-    areaPolygon.value.geometry?.addLatLng(coordinate);
+    // if (areaPolygon.geometry == null)  {
+    //   areaPolygon.geometry = new L.Polygon<L.LatLngLiteral>([]);
+    // } else {
+    areaPolygon.geometry = [
+      ...areaPolygon.geometry,  coordinate,
+    ];
+    // }
   };
 
   const deleteCoordinate = (index: number) => {
-    areaPolygon.value.geometry?.setLatLngs(areaPolygon.value.geometry.getLatLngs());
+    areaPolygon.geometry?.splice(index, 1);
   };
 
   const changeCoordinate = (index: number, coordinate: L.LatLng) => {
-    areaPolygon.value!.geometry![index] = coordinate;
+
+    areaPolygon.geometry = areaPolygon.geometry.map((el, i) =>
+    i == index ? coordinate : el,
+  );
   };
   const clearCoordinates = () => {
-    areaPolygon.value.geometry = [];
+    areaPolygon.geometry = [];
   };
   const setCircleCenter = (coordinate: L.LatLng) => {
-    if (circlePolygon.value.geometry == null) {
-      circlePolygon.value.geometry = L.circle(coordinate);
+    if (circlePolygon.geometry == null) {
+      circlePolygon.geometry = L.circle(coordinate);
     } else {
-      circlePolygon.value.geometry.setLatLng(coordinate);
+      circlePolygon.geometry.setLatLng(coordinate);
     }
   };
 
@@ -78,32 +90,32 @@ export const useMapSearchStore = defineStore('mapSearch', () => {
   };
 
   const activateAreaPolygon = () => {
-    areaPolygon.value.active = true;
-    circlePolygon.value.active = false;
-    filePolygon.value.active = false;
+    areaPolygon.active = true;
+    circlePolygon.active = false;
+    filePolygon.active = false;
     activePolygonFitBounds();
   };
 
   const activateCirclePolygon = () => {
-    areaPolygon.value.active = false;
-    circlePolygon.value.active = true;
-    filePolygon.value.active = false;
+    areaPolygon.active = false;
+    circlePolygon.active = true;
+    filePolygon.active = false;
     activePolygonFitBounds();
   };
 
   const activateFilePolygon = () => {
-    areaPolygon.value.active = false;
-    circlePolygon.value.active = false;
-    filePolygon.value.active = true;
+    areaPolygon.active = false;
+    circlePolygon.active = false;
+    filePolygon.active = true;
     activePolygonFitBounds();
   };
 
   const removeFilePolygon = () => {
-    filePolygon.value.geometry = null;
+    filePolygon.geometry = null;
   };
 
   const removeCirclePolygon = () => {
-    circlePolygon.value.geometry = null;
+    circlePolygon.geometry = null;
   };
 
   const clearPolygons = () => {
@@ -136,4 +148,3 @@ export const useMapSearchStore = defineStore('mapSearch', () => {
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useMapSearchStore, import.meta.hot));
 }
-

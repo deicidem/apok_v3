@@ -2,9 +2,9 @@
   <LLayerGroup>
     <LMarker
       data-number="id"
-      :draggable="polygon.drawable"
+      :draggable="drawable"
       @dragend="$emit($event, id)"
-      v-for="(marker, id) in polygon.geometry"
+      v-for="(marker, id) in geometry"
       :key="id"
       :lat-lng="marker"
     >
@@ -15,10 +15,10 @@
     </LMarker>
 
     <LPolygon
-      v-if="polygon.active"
       @click="save"
+      :key="geometry.length "
       :fill="true"
-      :lat-lngs="polygon.geometry"
+      :lat-lngs="geometry"
       :color="polygonColor"
     />
   </LLayerGroup>
@@ -26,51 +26,65 @@
 
 <script setup lang="ts">
 import type { AreaPolygon } from '@/models/SearchMapPolygon';
-import { computed } from 'vue';
-const props = defineProps<{polygon: AreaPolygon}>();
-
+import { LIcon, LLayerGroup, LMarker, LPolygon } from '@vue-leaflet/vue-leaflet';
+import { computed, ref, watch } from 'vue';
+const props = defineProps<{ geometry: L.LatLngExpression[], drawable: boolean }>();
+console.log(props.geometry);
 
 const polygonColor = computed(() => {
   switch (import.meta.env.VITE_THEME) {
-    case "apok":
-      return "#46a1bf";
-    case "avim":
-      return "#899cc5";
+    case 'apok':
+      return '#46a1bf';
+    case 'avim':
+      return '#899cc5';
     default:
-      return "#6BA2A6";
+      return '#6BA2A6';
   }
-})
-
+});
 const icon = computed(() => {
   return (
-    new URL('@/assets/img/map-icons/geo-markers/', import.meta.url).pathname + '/' + import.meta.env.VITE_THEME + '.svg'
-  )
-})
+    new URL('@/assets/img/map-icons/geo-markers/', import.meta.url).pathname +
+    '/' +
+    import.meta.env.VITE_THEME +
+    '.svg'
+  );
+});
+
+// watch(props.polygon, () => {
+//   points.value = (props.polygon.geometry!.map(el => {
+//     const c = el as L.LatLng;
+//     return {
+//       lat: c.lat,
+//       lng: c.lng
+//     }
+//   });
+//   console.log(points.value);
+// }, {deep: true  })
 
 const save = () => {
-      let json = polygon.toGeoJSON();
-      let string = JSON.stringify(json);
-      console.log(string);
+  // let json = props.polygon.geometry!.toGeoJSON();
+  // let string = JSON.stringify(json);
+  // console.log(string);
 
-      // L.extend(json.properties, polygon.properties);
-      // console.log(string);
+  // L.extend(json.properties, polygon.properties);
+  // console.log(string);
 
-      // let options = {
-      //   folder: "myshapes",
-      //   types: {
-      //     polygon: "POLYGON",
-      //   },
-      // };
-      // console.log(
-      //   SHP.download(
-      //     {
-      //       type: "FeatureCollection",
-      //       features: [json],
-      //     },
-      //     options
-      //   )
-      // );
-    },
+  // let options = {
+  //   folder: "myshapes",
+  //   types: {
+  //     polygon: "POLYGON",
+  //   },
+  // };
+  // console.log(
+  //   SHP.download(
+  //     {
+  //       type: "FeatureCollection",
+  //       features: [json],
+  //     },
+  //     options
+  //   )
+  // );
+};
 
 // import * as L from "leaflet";
 // import { LMarker, LPolygon, LIcon, LLayerGroup } from "vue2-leaflet";

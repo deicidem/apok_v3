@@ -7,47 +7,57 @@
     <LMap
       class="absolute right-0 top-0 z-10 h-full w-full ml-auto"
       ref="map"
+      :center="[47.41322, -1.219482]"
+      :zoom="3"
+      :options="{ attributionControl: false }"
+      @click="onClick($event)"
     >
-      <LTileLayer :url="url" :attribution="attribution" />
+      <LTileLayer :url="url" />
       <LControlZoom position="bottomleft" />
 
-      <MapAreaPolygon v-if="polygon.active"
-        :polygon="polygon"
-        :drawable="drawable"
+      <MapAreaPolygon v-if="areaPolygon.active && areaPolygon.geometry"
+        :geometry="areaPolygon.geometry"
+        :drawable="areaPolygon.drawable"
       />
-
     </LMap>
   </div>
 </template>
 
 <script setup lang="ts">
+import 'leaflet/dist/leaflet.css';
 import { useConfigsStore } from '@/stores/configs';
 import { useMapSearchStore } from '@/stores/mapSearch';
 import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
-
-const attribution = ref('&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors"');
+import { LMap, LTileLayer, LControlZoom, LPolygon } from '@vue-leaflet/vue-leaflet';
+import MapAreaPolygon from '@/components/map/MapAreaPolygon.vue';
+import type { AreaPolygon } from '@/models/SearchMapPolygon';
+import type { LatLngExpression } from 'leaflet';
 
 const polygonsStore = useMapSearchStore();
-const {areaPolygon} = storeToRefs(polygonsStore);
-const url = storeToRefs(useConfigsStore()).getConfigsMap.value["open_street_maps_server"]
+const { areaPolygon, circlePolygon } = storeToRefs(polygonsStore);
+const url = storeToRefs(useConfigsStore()).getConfigsMap.value['open_street_maps_server'].value;
+const map = ref<typeof LMap>();
+const p = ref<typeof LPolygon>();
 
-const polygonColor = computed(() => {
-  switch (import.meta.env.VITE_THEME) {
-    case "apok":
-      return "#46a1bf";
-    case "avim":
-      return "#899cc5";
-    default:
-      return "#6BA2A6";
+const poly = ref<any>([]);
+
+const onClick = ($event: any) => {
+  console.log($event);
+  console.log(map.value);
+  console.log(p.value);
+  
+  // if (map.value?.$el.isEqualNode($event.originalEvent.target)) {
+  // if (areaPolygon.value.drawable) {
+  polygonsStore.addCoordinate($event.latlng);
+  poly.value = [...poly.value, $event.latlng];
+  // }
+  // }
+  if (circlePolygon.value.drawable) {
+    polygonsStore.setCircleCenter($event.latlng);
   }
-})
-
-const icon = computed(() => {
-  return (
-    new URL('@/assets/img/map-icons/geo-markers/', import.meta.url).pathname + '/' + import.meta.env.VITE_THEME + '.svg'
-  )
-})
+};
+// const url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 // import { mapGetters, mapActions } from "vuex";
 // import { parseLatToDegrees, parseLngToDegrees } from "@/helpers/coordinates";
@@ -401,16 +411,6 @@ const icon = computed(() => {
 //     },
 
 //     // Добавление маркеров
-//     onClick($event) {
-//       if (this.$refs.map.$el.isEqualNode($event.originalEvent.target)) {
-//         if (this.drawable) {
-//           this.addCoordinate($event.latlng);
-//         }
-//       }
-//       if (this.circle.drawable) {
-//         this.setCircleCenter($event.latlng);
-//       }
-//     },
 
 //     // Изменение размеров полигона
 //     handleMarkerDragEnd($event, id) {

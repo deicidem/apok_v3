@@ -4,7 +4,7 @@
       <section class="hero">
         <!-- <div class="sidebar-block" :class="sidebarBlock">
           <AppSidebar @close="changeSidebarState(false)" @open="changeSidebarState(true)" />
-        </div>
+        </div> -->
 
         <div ref="wrap" class="map" :class="mapBlock">
           <AppMap @ready="setMapRef($event)" @updateCursorPosition="cursorPosition = $event" />
@@ -12,13 +12,14 @@
             <span class="lat">Широта: {{ cursorPosition.lat }}</span>
             <span class="lng">Долгота: {{ cursorPosition.lng }}</span>
           </div>
-        </div> -->
+        </div>
       </section>
     </div>
   </PageBase>
 </template>
 
 <script setup lang="ts">
+import AppMap from '@/components/app/AppMap.vue';
 import PageBase from '@/components/pagesBase/PageBase.vue';
 // import AppMap from "@/components/map/AppMap.vue";
 // import AppSidebar from "@/components/AppSidebar.vue";

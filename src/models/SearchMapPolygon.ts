@@ -1,5 +1,7 @@
+import * as L from 'leaflet';
+
 export type AreaPolygon = {
-  geometry: L.Polygon<L.LatLngLiteral> | null;
+  geometry: L.LatLngLiteral[];
   drawable: boolean;
   active: boolean;
 };
