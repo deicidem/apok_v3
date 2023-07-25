@@ -13,11 +13,11 @@
       @click="onClick($event)"
       @ready="onReady"
       :options="{ zoomControl: false }"
-      :maxBounds="maxBounds"
-      :maxBoundsViscosity="1"
-      :worldCopyJump="true"
+      :max-bounds="maxBounds"
+      :max-bounds-viscosity="1"
+      :world-copy-jump="true"
       :zoom="zoom"
-      :minZoom="3"
+      :min-zoom="3"
       :center="center"
       @mouseup="onSetLineState($event, false)"
       @mousemove="onMouseMove"
@@ -33,14 +33,8 @@
         
       </LControl> -->
 
-      <LControl
-        :position="'bottomright'"
-        class="clear-map"
-        v-show="mapHasObjects"
-      >
-        <AppButton color="white" size="small" @click="clearMap">
-          Очистить карту
-        </AppButton>
+      <LControl :position="'bottomright'" class="clear-map" v-show="mapHasObjects">
+        <AppButton color="white" size="small" @click="clearMap"> Очистить карту </AppButton>
       </LControl>
 
       <template v-if="polygon.active">
@@ -80,12 +74,7 @@
       />
 
       <LCircle
-        v-if="
-          circle.active &&
-          circle.geometry &&
-          circle.geometry.center &&
-          circle.geometry.radius
-        "
+        v-if="circle.active && circle.geometry && circle.geometry.center && circle.geometry.radius"
         :lat-lng="circle.geometry.center"
         :radius="circle.geometry.radius"
         color="red"
@@ -114,7 +103,7 @@
           :key="'img' + i"
           :url="img.img"
           :bounds="img.bounds"
-          className="dzz"
+          class-name="dzz"
         />
       </template>
 
@@ -127,13 +116,11 @@
           :weight="10"
           @mousedown="onSetLineState($event, true, img.index)"
           @mouseup="onSetLineState($event, false)"
-          :className="
-            img.data.sliderHorizontal ? 'resize-line horizontal' : 'resize-line'
-          "
+          :class-name="img.data.sliderHorizontal ? 'resize-line horizontal' : 'resize-line'"
         />
         <LImageOverlay
           ref="viewImages"
-          className="view-image"
+          class-name="view-image"
           v-for="img in activeViewImages"
           :key="'viewImg' + img.id"
           :url="img.data.img"
@@ -146,11 +133,11 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import { parseLatToDegrees, parseLngToDegrees } from "@/helpers/coordinates";
+import { mapGetters, mapActions } from 'vuex';
+import { parseLatToDegrees, parseLngToDegrees } from '@/helpers/coordinates';
 // import * as SHP from "shp-write";
-import "leaflet/dist/leaflet.css";
-import * as L from "leaflet";
+import 'leaflet/dist/leaflet.css';
+import * as L from 'leaflet';
 import {
   LMap,
   LTileLayer,
@@ -163,17 +150,15 @@ import {
   LControl,
   LPolyline,
   LPolygon,
-} from "vue2-leaflet";
+} from 'vue2-leaflet';
 // import MapAreaPolygon from '@/components/map/MapAreaPolygon.vue';
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require("@/assets/img/map-icons/geo-markers/" +
+  iconRetinaUrl: require('@/assets/img/map-icons/geo-markers/' +
     process.env.VUE_APP_THEME +
-    ".svg"),
-  iconUrl: require("@/assets/img/map-icons/geo-markers/" +
-    process.env.VUE_APP_THEME +
-    ".svg"),
+    '.svg'),
+  iconUrl: require('@/assets/img/map-icons/geo-markers/' + process.env.VUE_APP_THEME + '.svg'),
   iconSize: [40, 40],
   iconAnchor: [20, 40],
   popupAnchor: null,
@@ -183,7 +168,7 @@ L.Icon.Default.mergeOptions({
 });
 L.Icon.Default;
 export default {
-  name: "AppMap",
+  name: 'AppMap',
   components: {
     LMap,
     LTileLayer,
@@ -209,42 +194,40 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("map", {
-      polygon: "getAreaPolygon",
-      drawable: "getAreaPolygonDrawable",
-      center: "getCenter",
-      bounds: "getBounds",
-      zoom: "getZoom",
-      circle: "getCirclePolygon",
-      geoJsons: "getGeoJsonPolygons",
-      images: "getImages",
-      viewImages: "getViewImages",
-      filePolygon: "getFilePolygon",
-      needUpdateBounds: "getNeedUpdateBounds",
-      mapHasObjects: "mapHasObjects",
+    ...mapGetters('map', {
+      polygon: 'getAreaPolygon',
+      drawable: 'getAreaPolygonDrawable',
+      center: 'getCenter',
+      bounds: 'getBounds',
+      zoom: 'getZoom',
+      circle: 'getCirclePolygon',
+      geoJsons: 'getGeoJsonPolygons',
+      images: 'getImages',
+      viewImages: 'getViewImages',
+      filePolygon: 'getFilePolygon',
+      needUpdateBounds: 'getNeedUpdateBounds',
+      mapHasObjects: 'mapHasObjects',
     }),
 
-    ...mapGetters("configs", ["getConfigsMap"]),
+    ...mapGetters('configs', ['configsMap']),
 
     url() {
-      return this.getConfigsMap["open_street_maps_server"];
+      return this.configsMap['open_street_maps_server'];
     },
 
     polygonColor() {
       switch (process.env.VUE_APP_THEME) {
-        case "apok":
-          return "#46a1bf";
-        case "avim":
-          return "#899cc5";
+        case 'apok':
+          return '#46a1bf';
+        case 'avim':
+          return '#899cc5';
         default:
-          return "#6BA2A6";
+          return '#6BA2A6';
       }
     },
 
     icon() {
-      return require("@/assets/img/map-icons/geo-markers/" +
-        process.env.VUE_APP_THEME +
-        ".svg");
+      return require('@/assets/img/map-icons/geo-markers/' + process.env.VUE_APP_THEME + '.svg');
     },
 
     maxBounds() {
@@ -293,20 +276,20 @@ export default {
     },
   },
   methods: {
-    ...mapActions("map", [
-      "addCoordinate",
-      "changeCoordinate",
-      "setCenter",
-      "setZoom",
-      "setBounds",
-      "setNeedUpdateBounds",
-      "setCircleCenter",
-      "updateViewImage",
-      "clearMap",
+    ...mapActions('map', [
+      'addCoordinate',
+      'changeCoordinate',
+      'setCenter',
+      'setZoom',
+      'setBounds',
+      'setNeedUpdateBounds',
+      'setCircleCenter',
+      'updateViewImage',
+      'clearMap',
     ]),
 
     onReady(e) {
-      this.$emit("ready", this.$refs.map);
+      this.$emit('ready', this.$refs.map);
       this.setBounds(e.getBounds());
     },
 
@@ -351,7 +334,7 @@ export default {
 
           // положение шторки относительно верха изображения
           let k = current / absolute;
-          image.style.height = viewImage.initialHeight * k + "px";
+          image.style.height = viewImage.initialHeight * k + 'px';
 
           // меняем координату шторки
           this.updateViewImage({
@@ -374,7 +357,7 @@ export default {
 
           // положение шторки относительно левого края изображения
           let k = current / absolute;
-          image.style.width = viewImage.initialWidth * k + "px";
+          image.style.width = viewImage.initialWidth * k + 'px';
 
           // меняем координату шторки
           this.updateViewImage({
@@ -396,7 +379,7 @@ export default {
       // this.cursorUpdate = Date.now();
       // } else {
       // if (Date.now() - this.cursorUpdate > 100) {
-      this.$emit("updateCursorPosition", { lat, lng });
+      this.$emit('updateCursorPosition', { lat, lng });
       // this.cursorUpdate = Date.now();
       // }
       // }
@@ -432,7 +415,7 @@ export default {
         let center = viewImage.bounds.getCenter();
 
         if (viewImage.sliderHorizontal) {
-          this.$refs.lines[i]?.mapObject._path.classList.add("horizontal");
+          this.$refs.lines[i]?.mapObject._path.classList.add('horizontal');
 
           let top = new L.LatLng(northEast.lat, center.lng);
           let bottom = new L.LatLng(southWest.lat, center.lng);
@@ -440,7 +423,7 @@ export default {
 
           let currentCentered = new L.LatLng(
             viewImage.sliderCoordinate ?? southWest.lat,
-            center.lng
+            center.lng,
           );
 
           let current = top.distanceTo(currentCentered);
@@ -453,9 +436,9 @@ export default {
             lng: viewImage.sliderCoordinate,
           });
 
-          image.style.height = image.height * k + "px";
+          image.style.height = image.height * k + 'px';
         } else {
-          this.$refs.lines[i]?.mapObject._path.classList.remove("horizontal");
+          this.$refs.lines[i]?.mapObject._path.classList.remove('horizontal');
 
           let left = new L.LatLng(center.lat, southWest.lng);
           let right = new L.LatLng(center.lat, northEast.lng);
@@ -463,7 +446,7 @@ export default {
 
           let currentCentered = new L.LatLng(
             center.lat,
-            viewImage.sliderCoordinate ?? northEast.lng
+            viewImage.sliderCoordinate ?? northEast.lng,
           );
 
           let current = left.distanceTo(currentCentered);
@@ -475,7 +458,7 @@ export default {
             height: image.height,
             lng: viewImage.sliderCoordinate,
           });
-          image.style.width = image.width * k + "px";
+          image.style.width = image.width * k + 'px';
           console.log(this.$refs.viewImages[i].mapObject.getElement());
         }
       } else {
@@ -600,5 +583,13 @@ export default {
   font-weight: 700;
   left: 50%;
   transform: translate(-50%, -50%);
+  background: none;
+  border: none;
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 }
 </style>

@@ -5,25 +5,24 @@ import L from 'leaflet';
 import type { AreaPolygon, CirclePolygon, FilePolygon } from '@/models/SearchMapPolygon';
 import circleToPolygon from '@/helpers/circleToPolygon';
 
-
 export const useMapSearchStore = defineStore('mapSearch', () => {
-  const areaPolygon = reactive<AreaPolygon>({
+  const areaPolygon: AreaPolygon = reactive({
     geometry: [],
     drawable: false,
     active: true,
   });
-  const circlePolygon = reactive<CirclePolygon>({
+  const circlePolygon: CirclePolygon = reactive({
     geometry: null,
     drawable: false,
     active: false,
     center: {},
   });
-  const filePolygon = reactive<FilePolygon>({
+  const filePolygon: FilePolygon = reactive({
     geometry: null,
     active: false,
   });
 
-  const getActivePolygonJson = computed(() => {
+  const activePolygonJson = computed(() => {
     let json = null;
     if (areaPolygon.active && areaPolygon.geometry) {
       json = L.polygon(areaPolygon.geometry).toGeoJSON();
@@ -38,7 +37,7 @@ export const useMapSearchStore = defineStore('mapSearch', () => {
     return JSON.stringify(json);
   });
 
-  const getAreaPolygonFormattedCoordinates = computed(() => {
+  const areaPolygonFormattedCoordinates = computed(() => {
     return areaPolygon.geometry.map((el) => {
       const coordinate = el as L.LatLngLiteral;
       return {
@@ -48,88 +47,83 @@ export const useMapSearchStore = defineStore('mapSearch', () => {
     });
   });
 
-  const addCoordinate = (coordinate: L.LatLng) => {
+  function addCoordinate(coordinate: L.LatLng) {
     // if (areaPolygon.geometry == null)  {
     //   areaPolygon.geometry = new L.Polygon<L.LatLngLiteral>([]);
     // } else {
-    areaPolygon.geometry = [
-      ...areaPolygon.geometry,  coordinate,
-    ];
+    areaPolygon.geometry = [...areaPolygon.geometry, coordinate];
     // }
-  };
+  }
 
-  const deleteCoordinate = (index: number) => {
+  function deleteCoordinate(index: number) {
     areaPolygon.geometry?.splice(index, 1);
-  };
+  }
 
-  const changeCoordinate = (index: number, coordinate: L.LatLng) => {
-
-    areaPolygon.geometry = areaPolygon.geometry.map((el, i) =>
-    i == index ? coordinate : el,
-  );
-  };
-  const clearCoordinates = () => {
+  function changeCoordinate(index: number, coordinate: L.LatLng) {
+    areaPolygon.geometry = areaPolygon.geometry.map((el, i) => (i == index ? coordinate : el));
+  }
+  function clearCoordinates() {
     areaPolygon.geometry = [];
-  };
-  const setCircleCenter = (coordinate: L.LatLng) => {
+  }
+  function setCircleCenter(coordinate: L.LatLng) {
     if (circlePolygon.geometry == null) {
       circlePolygon.geometry = L.circle(coordinate);
     } else {
       circlePolygon.geometry.setLatLng(coordinate);
     }
-  };
+  }
 
-  const activePolygonFitBounds = () => {
-    if (getActivePolygonJson.value) {
-      const geoJson = L.geoJSON(JSON.parse(getActivePolygonJson.value));
+  function activePolygonFitBounds() {
+    if (activePolygonJson.value) {
+      const geoJson = L.geoJSON(JSON.parse(activePolygonJson.value));
       const bounds = geoJson.getBounds();
       // commit("setBounds", bounds);
       // commit('setZoom', {value: getters.getZoom - 1});
       // commit("setNeedUpdateBounds", true);
     }
-  };
+  }
 
-  const activateAreaPolygon = () => {
+  function activateAreaPolygon() {
     areaPolygon.active = true;
     circlePolygon.active = false;
     filePolygon.active = false;
     activePolygonFitBounds();
-  };
+  }
 
-  const activateCirclePolygon = () => {
+  function activateCirclePolygon() {
     areaPolygon.active = false;
     circlePolygon.active = true;
     filePolygon.active = false;
     activePolygonFitBounds();
-  };
+  }
 
-  const activateFilePolygon = () => {
+  function activateFilePolygon() {
     areaPolygon.active = false;
     circlePolygon.active = false;
     filePolygon.active = true;
     activePolygonFitBounds();
-  };
+  }
 
-  const removeFilePolygon = () => {
+  function removeFilePolygon() {
     filePolygon.geometry = null;
-  };
+  }
 
-  const removeCirclePolygon = () => {
+  function removeCirclePolygon() {
     circlePolygon.geometry = null;
-  };
+  }
 
-  const clearPolygons = () => {
+  function clearPolygons() {
     removeFilePolygon();
     removeCirclePolygon();
     clearCoordinates();
-  };
+  }
 
   return {
     areaPolygon,
     circlePolygon,
     filePolygon,
-    getActivePolygonJson,
-    getAreaPolygonFormattedCoordinates,
+    activePolygonJson,
+    areaPolygonFormattedCoordinates,
     addCoordinate,
     deleteCoordinate,
     changeCoordinate,

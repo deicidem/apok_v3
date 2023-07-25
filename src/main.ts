@@ -3,13 +3,13 @@ import { createPinia } from 'pinia';
 import { addErrorHandler } from '@/api/http';
 import App from '@/App.vue';
 import router from '@/router';
-import './index.css';
+import '@/index.css';
 import AppButton from '@/components/controls/AppButton.vue';
 import { useAlertsStore } from '@/stores/alerts';
-import * as a from "axios";
+import 'leaflet-draw/dist/leaflet.draw.css';
 
 const app = createApp(App);
-app.component("AppButton", AppButton)
+app.component('AppButton', AppButton);
 app.use(createPinia());
 app.use(router);
 addErrorHandler(setErrorHandler);

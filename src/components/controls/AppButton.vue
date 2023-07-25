@@ -3,7 +3,7 @@
     <button class="button" :disabled="disabled" @click="$emit('click', $event)">
       <slot></slot>
     </button>
-    <span class="tooltiptext" :style="tooltipMargin" v-if="tooltip">
+    <span v-if="tooltip" class="tooltiptext" :style="tooltipMargin">
       {{ tooltip }}
     </span>
   </div>
@@ -11,74 +11,74 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-
+defineEmits<{ (e: 'click', event: MouseEvent): void }>();
 const props = defineProps({
   contentType: {
-      type: String,
-      validator(value: string) {
-        return ["text", "icon"].includes(value);
-      },
-      default: "text",
+    type: String,
+    validator(value: string) {
+      return ['text', 'icon'].includes(value);
     },
-    color: {
-      type: String,
-      validator(value: string) {
-        return [
-          "gradient-main",
-          "gradient-white",
-          "gradient-white-red",
-          "gradient-red",
-          "white",
-          "white-red",
-        ].includes(value);
-      },
-      default: "gradient-white",
+    default: 'text',
+  },
+  color: {
+    type: String,
+    validator(value: string) {
+      return [
+        'gradient-main',
+        'gradient-white',
+        'gradient-white-red',
+        'gradient-red',
+        'white',
+        'white-red',
+      ].includes(value);
     },
-    size: {
-      type: String,
-      validator(value: string) {
-        return ["small", "default", "big"].includes(value);
-      },
-      default: "default",
+    default: 'gradient-white',
+  },
+  size: {
+    type: String,
+    validator(value: string) {
+      return ['small', 'default', 'big'].includes(value);
     },
-    active: {
-      type: Boolean,
-      default: false,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    tooltip: {
-      type: String,
-      default: null,
-    },
-    tooltipOffset: {
-      type: Object,
-      default: () => ({
-        left:0,
-        right: 0,
-        top: 0,
-        bottom: 0
-      })
-    }
-})
+    default: 'default',
+  },
+  active: {
+    type: Boolean,
+    default: false,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  tooltip: {
+    type: String,
+    default: null,
+  },
+  tooltipOffset: {
+    type: Object,
+    default: () => ({
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+    }),
+  },
+});
 
 const classes = computed(() => {
   return {
-        [props.contentType]: props.contentType,
-        [props.color]: props.color,
-        [props.size]: props.size,
-        active: props.active,
-        disabled: props.disabled,
-      };
+    [props.contentType]: props.contentType,
+    [props.color]: props.color,
+    [props.size]: props.size,
+    active: props.active,
+    disabled: props.disabled,
+  };
 });
 
 const tooltipMargin = computed(() => {
   let m = props.tooltipOffset;
   return {
-    margin: `${m.top}px ${m.right}px ${m.bottom}px ${m.left}px`
-  }
+    margin: `${m.top}px ${m.right}px ${m.bottom}px ${m.left}px`,
+  };
 });
 </script>
 
@@ -100,7 +100,7 @@ const tooltipMargin = computed(() => {
   transition: all 0.2s ease-out;
   will-change: transform;
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     height: 150%;
     width: 200%;
@@ -114,7 +114,7 @@ const tooltipMargin = computed(() => {
   &:disabled {
     cursor: no-drop;
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       top: 0;
       left: 0;

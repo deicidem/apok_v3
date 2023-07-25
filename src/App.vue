@@ -1,8 +1,8 @@
 <template>
   <AppLoader
     v-if="!loaded"
-    :showLabel="true"
-    :loaderSize="150"
+    :show-label="true"
+    :loader-size="150"
     class="absolute bottom-2/3 right-2/4 translate-x-2/4 translate-y-2/4"
   />
   <!-- <div class="wrapper" v-else>
@@ -10,14 +10,10 @@
     <RouterView />
     
   </div> -->
-  <div class="wrapper" v-else>
+  <div v-else class="wrapper">
     <div id="popup-target"></div>
     <RouterView />
-    <AppAlertsList
-      class="app-alerts"
-      :alerts="alerts"
-      @delete="deleteAlert"
-    />
+    <AppAlertsList class="app-alerts" :alerts="alerts" @delete="deleteAlert" />
   </div>
 </template>
 
@@ -40,8 +36,8 @@ import { useAlertsStore } from '@/stores/alerts';
 // import { mapGetters, mapActions } from "vuex";
 const loaded = ref<Boolean>(false);
 
-const {alerts} = storeToRefs(useAlertsStore());
-const {deleteAlert} = useAlertsStore();
+const { alerts } = storeToRefs(useAlertsStore());
+const { deleteAlert } = useAlertsStore();
 
 onMounted(async () => {
   const userStore = useUserStore();
@@ -63,8 +59,8 @@ onMounted(async () => {
       loaded.value = true;
       const params = new URLSearchParams(window.location.search);
       if (params.has('emailUrl')) {
-        const url: string |null = params.get('emailUrl');
-        const signature: string |null = params.get('signature');
+        const url: string | null = params.get('emailUrl');
+        const signature: string | null = params.get('signature');
         // if (userStore.isAuth) {
         //   await userStore.verifyEmail(`${url}&signature=${signature}`);
         // } else {

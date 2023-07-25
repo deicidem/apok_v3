@@ -1,4 +1,4 @@
-export type GroupType = {
+export interface GroupType {
   id: number;
   title: string;
-};
+}

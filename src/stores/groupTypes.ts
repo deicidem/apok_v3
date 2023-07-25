@@ -6,9 +6,9 @@ import type { GroupType } from '@/models/GroupType';
 export const useGroupTypesStore = defineStore('groupTypes', () => {
   const groupTypes = ref<Array<GroupType>>([]);
 
-  const fetchGroupTypes = async () => {
+  async function fetchGroupTypes() {
     groupTypes.value = (await groupTypesApi.all()).data.data;
-  };
+  }
 
   return { groupTypes, fetchGroupTypes };
 });

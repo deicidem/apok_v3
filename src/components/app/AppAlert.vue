@@ -1,14 +1,8 @@
 <template>
   <div class="alert" :class="theme">
     <div class="alert__badge">
-      <i
-        v-if="theme == 'error'"
-        class="icon icon-ic_fluent_error_circle_20_regular"
-      ></i>
-      <i
-        v-else-if="theme == 'success'"
-        class="icon icon-ic_fluent_checkmark_circle_20_regular"
-      ></i>
+      <i v-if="theme == 'error'" class="icon icon-ic_fluent_error_circle_20_regular"></i>
+      <i v-else-if="theme == 'success'" class="icon icon-ic_fluent_checkmark_circle_20_regular"></i>
       <i v-else class="icon icon-ic_fluent_info_20_regular"></i>
     </div>
     <div class="alert__content">
@@ -23,7 +17,8 @@
 
 <script setup lang="ts">
 import type { Alert } from '@/models/Alert';
-defineProps<{title: Alert["title"], theme: Alert["theme"], message: Alert["message"]}>()
+defineProps<{ title: Alert['title']; theme: Alert['theme']; message: Alert['message'] }>();
+defineEmits<{ (e: 'close'): void }>();
 </script>
 
 <style scoped lang="scss">
@@ -35,9 +30,11 @@ defineProps<{title: Alert["title"], theme: Alert["theme"], message: Alert["messa
   display: flex;
   align-items: stretch;
   overflow: hidden;
+
   &:last-child {
     margin-bottom: 0;
   }
+
   &.error {
     .alert {
       &__badge {
@@ -45,6 +42,7 @@ defineProps<{title: Alert["title"], theme: Alert["theme"], message: Alert["messa
       }
     }
   }
+
   &.success {
     .alert {
       &__badge {
@@ -52,6 +50,7 @@ defineProps<{title: Alert["title"], theme: Alert["theme"], message: Alert["messa
       }
     }
   }
+
   &.info {
     .alert {
       &__badge {
@@ -59,6 +58,7 @@ defineProps<{title: Alert["title"], theme: Alert["theme"], message: Alert["messa
       }
     }
   }
+
   &__content {
     display: flex;
     flex-direction: column;
@@ -67,18 +67,21 @@ defineProps<{title: Alert["title"], theme: Alert["theme"], message: Alert["messa
     background: #fff;
     padding: 5px 30px 5px 10px;
   }
+
   &__badge {
     min-height: 50px;
     min-width: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+
     .icon {
       font-size: 32px;
 
       color: #fff;
     }
   }
+
   &__title {
     margin: 0;
     line-height: 1.5;

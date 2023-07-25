@@ -27,19 +27,19 @@ export const useUserStore = defineStore('user', () => {
     return user.value?.role.slug == 'admin';
   });
 
-  const setCookie = async () => {
+  async function setCookie() {
     await userApi.setCookie();
-  };
+  }
 
-  const auth = async () => {
-    const { getConfigsMap } = useConfigsStore();
+  async function auth() {
+    const { configsMap } = useConfigsStore();
     try {
       user.value = (await userApi.auth()).data.data;
 
       UserChannel.setChannel(user.value!.id);
       AdminChannel.setChannel();
 
-      const time: number = Number(getConfigsMap['user_auth_check_interval'].value) * 60 * 1000;
+      const time: number = Number(configsMap['user_auth_check_interval'].value) * 60 * 1000;
       createTimer(time, async () => {
         await auth();
       });
@@ -48,9 +48,9 @@ export const useUserStore = defineStore('user', () => {
       UserChannel.removeChannel();
       AdminChannel.removeChannel();
     }
-  };
+  }
 
-  const login = async (email: string, password: string, remember: boolean) => {
+  async function login(email: string, password: string, remember: boolean) {
     const { addSuccessAlert } = useAlertsStore();
 
     await userApi.login(email, password, remember);
@@ -67,9 +67,9 @@ export const useUserStore = defineStore('user', () => {
       await verifyEmail(emailVerificationLink.value);
       emailVerificationLink.value = null;
     }
-  };
+  }
 
-  const regUser = async (
+  async function regUser(
     firstName: string,
     lastName: string,
     email: string,
@@ -77,7 +77,7 @@ export const useUserStore = defineStore('user', () => {
     passwordConfirmation: string,
     organisation: string,
     phoneNumber: string,
-  ) => {
+  ) {
     const { addSuccessAlert } = useAlertsStore();
 
     await userApi.register(
@@ -97,15 +97,15 @@ export const useUserStore = defineStore('user', () => {
     } as Alert);
 
     await auth();
-  };
+  }
 
-  const updateUser = async (
+  async function updateUser(
     firstName: string,
     lastName: string,
     email: string,
     phoneNumber: string,
     organisation: string,
-  ) => {
+  ) {
     const { addSuccessAlert } = useAlertsStore();
 
     await userApi.update(firstName, lastName, email, phoneNumber, organisation);
@@ -115,14 +115,14 @@ export const useUserStore = defineStore('user', () => {
     } as Alert);
 
     await auth();
-  };
+  }
 
-  const updatePassword = async (
+  async function updatePassword(
     email: string,
     currentPassword: string,
     password: string,
     passwordConfirmation: string,
-  ) => {
+  ) {
     const { addSuccessAlert } = useAlertsStore();
 
     await userApi.updatePassword(email, currentPassword, password, passwordConfirmation);
@@ -132,9 +132,9 @@ export const useUserStore = defineStore('user', () => {
     } as Alert);
 
     await auth();
-  };
+  }
 
-  const forgotPassword = async (email: string) => {
+  async function forgotPassword(email: string) {
     const { addSuccessAlert } = useAlertsStore();
 
     await userApi.forgotPassword(email);
@@ -144,14 +144,14 @@ export const useUserStore = defineStore('user', () => {
     } as Alert);
 
     await auth();
-  };
+  }
 
-  const resetPassword = async (
+  async function resetPassword(
     email: string,
     password: string,
     passwordConfirmation: string,
     token: string,
-  ) => {
+  ) {
     const { addSuccessAlert } = useAlertsStore();
 
     await userApi.resetPassword(email, password, passwordConfirmation, token);
@@ -161,9 +161,9 @@ export const useUserStore = defineStore('user', () => {
     } as Alert);
 
     await auth();
-  };
+  }
 
-  const logout = async () => {
+  async function logout() {
     const { addSuccessAlert } = useAlertsStore();
 
     await userApi.logout();
@@ -174,9 +174,9 @@ export const useUserStore = defineStore('user', () => {
     } as Alert);
 
     // dispatch("notifications/disconnectFromEcho", null, {root: true});
-  };
+  }
 
-  const sendEmailVerification = async () => {
+  async function sendEmailVerification() {
     const { addSuccessAlert } = useAlertsStore();
 
     await userApi.sendEmailVerification();
@@ -184,9 +184,9 @@ export const useUserStore = defineStore('user', () => {
     addSuccessAlert({
       title: 'На вашу почту было отправлено письмо для подтверждения',
     } as Alert);
-  };
+  }
 
-  const verifyEmail = async (url: string) => {
+  async function verifyEmail(url: string) {
     const { addSuccessAlert } = useAlertsStore();
 
     await userApi.verifyEmail(url);
@@ -196,7 +196,7 @@ export const useUserStore = defineStore('user', () => {
     } as Alert);
 
     await auth();
-  };
+  }
 
   // async fetchNotificationsConfig({ commit }) {
   //   commit("setPending", true);
@@ -217,7 +217,7 @@ export const useUserStore = defineStore('user', () => {
   //   commit("setPending", false);
   // },
 
-  const createTimer = async (time: number, callback: Function) => {
+  async function createTimer(time: number, callback: Function) {
     if (authTimer.value) {
       clearTimeout(authTimer.value);
     }
@@ -226,7 +226,7 @@ export const useUserStore = defineStore('user', () => {
         await callback;
       }, time),
     );
-  };
+  }
 
   return {
     user,

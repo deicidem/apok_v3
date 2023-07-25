@@ -1,6 +1,6 @@
 import type { Role } from './Role';
 
-export type User = {
+export interface User {
   id: number;
   firstName: string;
   lastName: string;
@@ -13,4 +13,4 @@ export type User = {
   blocked: boolean;
   date: Date;
   updated: Date;
-};
+}

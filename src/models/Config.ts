@@ -1,11 +1,11 @@
-export type Config = {
+export interface Config {
   id: number;
   name: string;
   value: string;
   description: string;
   type: string;
-};
+}
 
-export type ConfigsMap = {
+export interface ConfigsMap {
   [key: string]: Config;
-};
+}

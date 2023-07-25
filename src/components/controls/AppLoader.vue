@@ -14,7 +14,7 @@
         </div>
       </figure>
     </div>
-    <div class="loader-text" v-if="showLabel">
+    <div v-if="showLabel" class="loader-text">
       Загрузка<span>{{ dots }}</span>
     </div>
   </div>

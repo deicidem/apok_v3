@@ -8,7 +8,7 @@
 
     <AppLoader
       v-show="!loaded"
-      :loaderSize="100"
+      :loader-size="100"
       class="absolute bottom-2/3 right-2/4 translate-x-2/4 translate-y-2/4"
     />
 
@@ -18,11 +18,12 @@
   </div>
 </template>
 
-<script>
-import vuescroll from "vuescroll";
-import "vuescroll/dist/vuescroll.css";
-import AppLoader from "@/components/controls/AppLoader.vue";
-import { mapGetters } from "vuex";
+<script setup lang="ts">
+import vuescroll from 'vuescroll';
+import 'vuescroll/dist/vuescroll.css';
+import AppLoader from '@/components/controls/AppLoader.vue';
+
+defineProps<{ loaded: boolean }>();
 
 export default {
   components: {
@@ -30,10 +31,10 @@ export default {
     AppLoader,
   },
 
-  props: ["loaded"],
+  props: ['loaded'],
 
   computed: {
-    ...mapGetters(["scrollOps"]),
+    ...mapGetters(['scrollOps']),
   },
 };
 </script>

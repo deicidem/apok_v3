@@ -9,7 +9,7 @@
             :classes="classes"
             :pending="pending"
             @changeSubmitAvailable="submitAvailable = $event"
-            :needAgreement="true"
+            :need-agreement="true"
           />
         </template>
         <template #actions>

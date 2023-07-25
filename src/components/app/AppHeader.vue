@@ -4,7 +4,7 @@
       {{ title }}
     </h1>
 
-    <RouterLink :to="{ name: 'home' }" custom v-slot="{ navigate }" v-if="!showMenu">
+    <RouterLink v-if="!showMenu" v-slot="{ navigate }" :to="{ name: 'home' }" custom>
       <div class="back" @click="navigate">
         <div class="back-arrow">
           <i class="icon icon-ic_fluent_arrow_left_20_regular"></i>
@@ -29,18 +29,16 @@
       </nav>
 
       <div class="header-menu">
-        <div class="header-menu__text" v-if="isAuth">
-          Добро пожаловать, {{ user!.firstName }}!
-        </div>
+        <div v-if="isAuth" class="header-menu__text">Добро пожаловать, {{ user!.firstName }}!</div>
 
         <div class="header-menu__buttons">
-          <div class="header-menu-button" v-if="isAuth">
-            <AppButton content-type="icon" size="big" @click="onLogout" tooltip="Выйти"
+          <div v-if="isAuth" class="header-menu-button">
+            <AppButton content-type="icon" size="big" tooltip="Выйти" @click="onLogout"
               ><i class="icon icon-ic_fluent_sign_out_20_regular"></i
             ></AppButton>
           </div>
 
-          <div class="header-menu-button" v-else>
+          <div v-else class="header-menu-button">
             <!-- <RouterLink :to="{ name: 'login' }" custom v-slot="{ navigate }">
               <AppButton content-type="icon" size="big" tooltip="Авторизоваться" @click="navigate">
                 <i class="icon icon-ic_fluent_person_20_filled"></i>
@@ -48,7 +46,7 @@
             </RouterLink> -->
           </div>
 
-          <div class="header-menu-button" v-if="isAuth && isAdmin">
+          <!-- <div class="header-menu-button" v-if="isAuth && isAdmin">
             <RouterLink :to="{ name: 'admin' }" custom v-slot="{ navigate }">
               <AppButton
                 content-type="icon"
@@ -59,7 +57,7 @@
                 <i class="icon icon-ic_fluent_settings_20_regular"></i>
               </AppButton>
             </RouterLink>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -87,7 +85,7 @@ theme.value = import.meta.env.VITE_THEME;
 title.value = import.meta.env.VITE_TITLE;
 
 const userStore = useUserStore();
-const {user, isAuth, isAdmin} = storeToRefs(userStore);
+const { user, isAuth, isAdmin } = storeToRefs(userStore);
 
 const logo = computed(() => {
   return (
@@ -97,10 +95,10 @@ const logo = computed(() => {
 
 const onLogout = async () => {
   if (useRoute().name != 'home') {
-    useRouter().push({name: 'home'});
+    useRouter().push({ name: 'home' });
   }
   await userStore.logout();
-}
+};
 </script>
 
 <style lang="scss" scoped>

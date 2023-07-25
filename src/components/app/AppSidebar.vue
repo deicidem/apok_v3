@@ -1,7 +1,7 @@
 <template>
-  <div class="sidebar_wrap" :class="{ active }">
-    <div class="sidebar" :class="{ active }">
-      <PlanData v-if="isAuth && isVerified"/>
+  <div class="sidebar_wrap" :class="{ active: sidebarActive }">
+    <div class="sidebar" :class="{ active: sidebarActive }">
+      <!-- <PlanData v-if="isAuth && isVerified" /> -->
 
       <div class="sidebar-content">
         <RouterView> </RouterView>
@@ -9,12 +9,9 @@
     </div>
 
     <div class="sidebar-collapsed">
-      <div @click="toggleSidebar()" class="sidebar-collapsed__item">
+      <div class="sidebar-collapsed__item" @click="toggleSidebar()">
         <div class="sidebar-collapsed__link">
-          <i
-            v-if="active"
-            class="icon icon-ic_fluent_arrow_minimize_20_regular"
-          ></i>
+          <i v-if="sidebarActive" class="icon icon-ic_fluent_arrow_minimize_20_regular"></i>
 
           <i v-else class="icon icon-ic_fluent_arrow_maximize_20_regular"></i>
         </div>
@@ -22,30 +19,22 @@
 
       <div
         v-for="(route, i) in routes"
+        v-show="isRouteVisible(route)"
         :key="i"
-        v-show="isVisible(route)"
         class="sidebar-collapsed__item"
-        @click="open"
+        @click="openSidebar"
       >
-        <RouterLink
-          :to="{ name: route.name }"
-          custom
-          v-slot="{ navigate, isActive }"
-        >
-          <div
-            @click="navigate"
-            :class="{ active: isActive }"
-            class="sidebar-collapsed__link"
-          >
+        <RouterLink v-slot="{ navigate, isActive }" :to="{ name: route.name }" custom>
+          <div :class="{ active: isActive }" class="sidebar-collapsed__link" @click="navigate">
             <i class="icon" :class="route.icon"></i>
-
+            <!-- 
             <div
               class="notification"
               v-if="route.title == 'Мои уведомления'"
               v-show="getUnreadCount > 0"
             >
               <div class="notification-number">{{ getUnreadCount }}</div>
-            </div>
+            </div> -->
           </div>
         </RouterLink>
 
@@ -55,133 +44,125 @@
   </div>
 </template>
 
-<script>
-import { mapGetters, mapActions } from "vuex";
-import PlanData from "@/components/plan/PlanData.vue";
+<script setup lang="ts">
+// import PlanData from '@/components/plan/PlanData.vue';
+import { computed, onMounted, reactive } from 'vue';
+import { useComponentsStore } from '@/stores/components';
+import { useConfigsStore } from '@/stores/configs';
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
 
-export default {
-  name: "AppSidebar",
+const componentsStore = useComponentsStore();
+const configsStore = useConfigsStore();
+const userStore = useUserStore();
+const { isAuth, isVerified } = storeToRefs(userStore);
+const { sidebarActive } = storeToRefs(componentsStore);
+type Route = {
+  title: string;
+  name: string;
+  requiresAuth: boolean;
+  requiresVerification: boolean;
+  icon: string;
+};
 
-  components: {
-    PlanData,
+const routes: Route[] = reactive([
+  {
+    title: 'Мои задачи',
+    name: 'tasks',
+    requiresAuth: true,
+    requiresVerification: true,
+    icon: 'icon-ic_fluent_clipboard_bullet_list_ltr_20_regular',
   },
-
-  data() {
-    return {
-      cardDataClass: "",
-
-      routes: [
-        {
-          title: "Мои задачи",
-          name: "tasks",
-          requiresAuth: true,
-          requiresVerification: true,
-          icon: "icon-ic_fluent_clipboard_bullet_list_ltr_20_regular",
-        },
-        {
-          title: "Доступные задачи",
-          name: "plan",
-          requiresAuth: false,
-          requiresVerification: false,
-          icon: "icon-ic_fluent_apps_list_detail_20_regular",
-        },
-        {
-          title: "Поиск снимков",
-          name: "search",
-          requiresAuth: false,
-          requiresVerification: false,
-          icon: "icon-ic_fluent_search_20_regular",
-        },
-        {
-          title: "Мои уведомления",
-          name: "notifications",
-          requiresAuth: true,
-          requiresVerification: true,
-          icon: "icon-ic_fluent_alert_20_regular",
-        },
-        {
-          title: "Мои файлы",
-          name: "files",
-          requiresAuth: true,
-          requiresVerification: true,
-          icon: "icon-ic_fluent_folder_20_regular",
-        },
-        {
-          title: "Личный кабинет",
-          name: "user",
-          requiresAuth: true,
-          icon: "icon-ic_fluent_person_20_regular",
-        },
-        {
-          title: "Мои группы",
-          name: "groups",
-          requiresAuth: true,
-          requiresVerification: true,
-          icon: "icon-ic_fluent_people_team_20_regular",
-        },
-        {
-          title: "Мои снимки",
-          name: "dzzs",
-          requiresAuth: true,
-          requiresVerification: true,
-          icon: "icon-ic_fluent_image_20_regular",
-        },
-      ],
-    };
+  {
+    title: 'Доступные задачи',
+    name: 'plan',
+    requiresAuth: false,
+    requiresVerification: false,
+    icon: 'icon-ic_fluent_apps_list_detail_20_regular',
   },
-
-  computed: {
-    ...mapGetters({ active: "getSidebarState" }),
-    ...mapGetters("notifications", ["getUnreadCount"]),
-    ...mapGetters("configs", ["needVerificationToViewDzzs"]),
-    ...mapGetters("user", ["isAuth", "isVerified", "isEmailVerified"]),
-    isVisible() {
-      return (route) => {
-        let res = true;
-        if (route.requiresAuth && res) {
-          res = this.isAuth;
-        }
-        if (route.requiresVerification && res) {
-          res = this.isVerified;
-        }
-        return res;
-      };
-    },
+  {
+    title: 'Поиск снимков',
+    name: 'search',
+    requiresAuth: false,
+    requiresVerification: false,
+    icon: 'icon-ic_fluent_search_20_regular',
   },
-  methods: {
-    ...mapActions(["setSidebarState"]),
-
-    open() {
-      this.setSidebarState(true);
-      this.$emit("open");
-    },
-
-    close() {
-      this.setSidebarState(false);
-      this.$emit("close");
-    },
-
-    toggleSidebar() {
-      if (this.active) {
-        this.close();
-      } else {
-        this.open();
-      }
-    },
+  {
+    title: 'Мои уведомления',
+    name: 'notifications',
+    requiresAuth: true,
+    requiresVerification: true,
+    icon: 'icon-ic_fluent_alert_20_regular',
   },
-  mounted() {
-    if (this.needVerificationToViewDzzs) {
-      this.routes.forEach(el => {
-        if (el.name == "search") {
-          el.requiresAuth = true;
-          el.requiresEmailVerification = true;
-          el.requiresVerification = true;
-        }
-      });
+  {
+    title: 'Мои файлы',
+    name: 'files',
+    requiresAuth: true,
+    requiresVerification: true,
+    icon: 'icon-ic_fluent_folder_20_regular',
+  },
+  {
+    title: 'Личный кабинет',
+    name: 'user',
+    requiresAuth: true,
+    requiresVerification: false,
+    icon: 'icon-ic_fluent_person_20_regular',
+  },
+  {
+    title: 'Мои группы',
+    name: 'groups',
+    requiresAuth: true,
+    requiresVerification: true,
+    icon: 'icon-ic_fluent_people_team_20_regular',
+  },
+  {
+    title: 'Мои снимки',
+    name: 'dzzs',
+    requiresAuth: true,
+    requiresVerification: true,
+    icon: 'icon-ic_fluent_image_20_regular',
+  },
+]);
+
+const isRouteVisible = computed(() => {
+  return (route: Route) => {
+    let res = true;
+    if (route.requiresAuth && res) {
+      res = isAuth.value;
     }
+    if (route.requiresVerification && res) {
+      res = isVerified.value;
+    }
+    return res;
+  };
+});
 
+const openSidebar = () => {
+  componentsStore.changeSidebarState(true);
+};
+
+const closeSidebar = () => {
+  componentsStore.changeSidebarState(false);
+};
+
+const toggleSidebar = () => {
+  if (sidebarActive.value) {
+    closeSidebar();
+  } else {
+    openSidebar();
   }
 };
+
+onMounted(() => {
+  if (configsStore.configsMap['need_verification_to_view_dzzs'].value) {
+    routes.forEach((route: Route) => {
+      if (route.name == 'search') {
+        route.requiresAuth = true;
+        route.requiresVerification = true;
+      }
+    });
+  }
+});
 </script>
 
 <style lang="scss" scoped>

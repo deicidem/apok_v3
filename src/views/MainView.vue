@@ -2,12 +2,12 @@
   <PageBase :show-menu="true">
     <div class="hero-wrapper">
       <section class="hero">
-        <!-- <div class="sidebar-block" :class="sidebarBlock">
-          <AppSidebar @close="changeSidebarState(false)" @open="changeSidebarState(true)" />
-        </div> -->
+        <div class="sidebar-block" :class="sidebarBlock">
+          <AppSidebar />
+        </div>
 
         <div ref="wrap" class="map" :class="mapBlock">
-          <AppMap @ready="setMapRef($event)" @updateCursorPosition="cursorPosition = $event" />
+          <AppMap @ready="setMapRef" @update-cursor-position="cursorPosition = $event" />
           <div class="cursor-position" v-if="cursorPosition">
             <span class="lat">Широта: {{ cursorPosition.lat }}</span>
             <span class="lng">Долгота: {{ cursorPosition.lng }}</span>
@@ -22,23 +22,23 @@
 import AppMap from '@/components/app/AppMap.vue';
 import PageBase from '@/components/pagesBase/PageBase.vue';
 // import AppMap from "@/components/map/AppMap.vue";
-// import AppSidebar from "@/components/AppSidebar.vue";
+import AppSidebar from '@/components/app/AppSidebar.vue';
 // import PageBase from "@/components/PageBase.vue";
 // import { mapGetters, mapActions } from "vuex";
 import { useComponentsStore } from '@/stores/components';
 import { storeToRefs } from 'pinia';
 import { nextTick, onMounted, ref, watch } from 'vue';
+import type { LMap } from '@vue-leaflet/vue-leaflet';
 const sidebarBlock = ref<string>('collapsed');
 const mapBlock = ref('');
-const mapRef = ref<any>(null);
+const mapRef = ref<typeof LMap>();
 const openTimer = ref<number>();
 const closeTimer = ref<number>();
 const cursorPosition = ref<{ lat: number; lng: number }>({ lat: 0, lng: 0 });
-const { changeSidebarState } = useComponentsStore();
 const { sidebarActive } = storeToRefs(useComponentsStore());
 
-const setMapRef = ($event: any) => {
-  mapRef.value = $event;
+const setMapRef = (ref: typeof LMap) => {
+  mapRef.value = ref;
 };
 
 onMounted(() => {
@@ -54,21 +54,26 @@ onMounted(() => {
 watch(sidebarActive, () => {
   if (sidebarActive.value) {
     sidebarBlock.value = '';
+
     clearTimeout(closeTimer.value);
+
     openTimer.value = Number(
       setTimeout(() => {
         mapBlock.value = 'collapsed';
         nextTick(() => {
-          mapRef.value?.mapObject.invalidateSize();
+          mapRef.value?.leafletObject.invalidateSize();
         });
       }, 300),
     );
   } else {
     mapBlock.value = '';
+
     nextTick(() => {
-      mapRef.value?.mapObject.invalidateSize();
+      mapRef.value?.leafletObject.invalidateSize();
     });
+
     clearTimeout(openTimer.value);
+
     closeTimer.value = Number(
       setTimeout(() => {
         sidebarBlock.value = 'collapsed';

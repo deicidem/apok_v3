@@ -1,11 +1,11 @@
-export type Satellite = {
+export interface Satellite {
   id: number;
   name: string;
   version: string;
   type: string;
   typeId: number;
-};
+}
 
-export type SatellitesMap = {
+export interface SatellitesMap {
   [key: string]: Satellite;
-};
+}

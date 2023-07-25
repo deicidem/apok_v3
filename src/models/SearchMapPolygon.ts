@@ -1,19 +1,19 @@
 import * as L from 'leaflet';
 
-export type AreaPolygon = {
+export interface AreaPolygon {
   geometry: L.LatLngLiteral[];
   drawable: boolean;
   active: boolean;
-};
+}
 
-export type CirclePolygon = {
+export interface CirclePolygon {
   geometry: L.Circle | null;
   drawable: boolean;
   active: boolean;
   center: Object;
-};
+}
 
-export type FilePolygon = {
+export interface FilePolygon {
   geometry: L.GeoJSON | null;
   active: boolean;
-};
+}

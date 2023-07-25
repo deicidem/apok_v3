@@ -17,7 +17,8 @@
 <script setup lang="ts">
 import AppAlert from '@/components/app/AppAlert.vue';
 import type { Alert } from '@/models/Alert';
-defineProps<{alerts: Array<Alert>}>()
+defineProps<{ alerts: Array<Alert> }>();
+defineEmits<{ (e: 'delete', alertId: number): void }>();
 </script>
 
 <style lang="scss" scoped>

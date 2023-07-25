@@ -6,7 +6,7 @@ import type { Config, ConfigsMap } from '@/models/Config';
 export const useConfigsStore = defineStore('configs', () => {
   const configs = ref<Array<Config>>();
 
-  const getConfigsMap = computed<ConfigsMap>(() => {
+  const configsMap = computed<ConfigsMap>(() => {
     const obj: ConfigsMap = {};
     configs.value?.forEach((item) => {
       obj[item.name.toString()] = item;
@@ -19,5 +19,5 @@ export const useConfigsStore = defineStore('configs', () => {
     return configs;
   };
 
-  return { configs, getConfigsMap, fetchConfigs };
+  return { configs, configsMap, fetchConfigs };
 });

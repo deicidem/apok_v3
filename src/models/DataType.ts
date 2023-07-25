@@ -1,4 +1,4 @@
-export type DataType = {
+export interface DataType {
   id: number;
   name: string;
-};
+}
