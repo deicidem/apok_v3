@@ -6,13 +6,8 @@
   </PageBase>
 </template>
 
-<script>
-import PageBase from "@/components/PageBase.vue";
-export default {
-  components: {
-    PageBase,
-  },
-}
+<script setup lang="ts">
+import PageBase from '@/components/pagesBase/PageBase.vue';
 </script>
 
 <style lang="scss" scoped>

@@ -15,21 +15,14 @@
   </PageBase>
 </template>
 
-<script>
-import vuescroll from "vuescroll";
-import "vuescroll/dist/vuescroll.css";
-import PageBase from "@/components/PageBase.vue";
-import { mapGetters } from "vuex";
+<script setup lang="ts">
+import vuescroll from 'vuescroll';
+import 'vuescroll/dist/vuescroll.css';
+import PageBase from '@/components/pagesBase/PageBase.vue';
+import { storeToRefs } from 'pinia';
+import { useComponentsStore } from '@/stores/components';
 
-export default {
-  computed: {
-    ...mapGetters(["scrollOps"]),
-  },
-  components: {
-    vuescroll,
-    PageBase,
-  },
-};
+const { scrollOps } = storeToRefs(useComponentsStore());
 </script>
 
 <style lang="scss">

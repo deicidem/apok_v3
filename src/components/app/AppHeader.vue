@@ -1,5 +1,5 @@
 <template>
-  <header class="header">
+  <header ref="header" class="header">
     <h1 class="title">
       {{ title }}
     </h1>
@@ -77,6 +77,7 @@ defineProps({
   },
 });
 
+const header = ref<HTMLHtmlElement>();
 const theme = ref<string>('');
 const title = ref<string>('');
 const tutorial = ref<string>('api/docs');
@@ -99,6 +100,8 @@ const onLogout = async () => {
   }
   await userStore.logout();
 };
+
+defineExpose({ header });
 </script>
 
 <style lang="scss" scoped>

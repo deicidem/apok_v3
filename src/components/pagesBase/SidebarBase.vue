@@ -12,7 +12,7 @@
       class="absolute bottom-2/3 right-2/4 translate-x-2/4 translate-y-2/4"
     />
 
-    <vuescroll :ops="scrollOps" v-show="loaded">
+    <vuescroll v-show="loaded" :ops="scrollOps">
       <slot name="content"></slot>
     </vuescroll>
   </div>
@@ -22,21 +22,12 @@
 import vuescroll from 'vuescroll';
 import 'vuescroll/dist/vuescroll.css';
 import AppLoader from '@/components/controls/AppLoader.vue';
+import { useComponentsStore } from '@/stores/components';
+import { storeToRefs } from 'pinia';
 
 defineProps<{ loaded: boolean }>();
 
-export default {
-  components: {
-    vuescroll,
-    AppLoader,
-  },
-
-  props: ['loaded'],
-
-  computed: {
-    ...mapGetters(['scrollOps']),
-  },
-};
+const { scrollOps } = storeToRefs(useComponentsStore());
 </script>
 
 <style lang="scss" scoped>
@@ -60,6 +51,14 @@ export default {
     font-size: 18px;
     font-weight: 400;
   }
+}
+
+:slotted(.c-title) {
+  margin: 0;
+  color: $white;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 400;
 }
 
 .__rail-is-vertical {

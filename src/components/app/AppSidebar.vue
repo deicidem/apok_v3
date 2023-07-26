@@ -27,14 +27,14 @@
         <RouterLink v-slot="{ navigate, isActive }" :to="{ name: route.name }" custom>
           <div :class="{ active: isActive }" class="sidebar-collapsed__link" @click="navigate">
             <i class="icon" :class="route.icon"></i>
-            <!-- 
+
             <div
-              class="notification"
               v-if="route.title == 'Мои уведомления'"
-              v-show="getUnreadCount > 0"
+              v-show="unreadCount > 0"
+              class="notification"
             >
-              <div class="notification-number">{{ getUnreadCount }}</div>
-            </div> -->
+              <div class="notification-number">{{ unreadCount }}</div>
+            </div>
           </div>
         </RouterLink>
 
@@ -51,13 +51,18 @@ import { useComponentsStore } from '@/stores/components';
 import { useConfigsStore } from '@/stores/configs';
 import { useUserStore } from '@/stores/user';
 import { storeToRefs } from 'pinia';
+import { useNotificationsStore } from '@/stores/notifications';
 
 const componentsStore = useComponentsStore();
 const configsStore = useConfigsStore();
 const userStore = useUserStore();
+const notificationsStore = useNotificationsStore();
+
+const { unreadCount } = storeToRefs(notificationsStore);
 const { isAuth, isVerified } = storeToRefs(userStore);
 const { sidebarActive } = storeToRefs(componentsStore);
-type Route = {
+
+export type Route = {
   title: string;
   name: string;
   requiresAuth: boolean;

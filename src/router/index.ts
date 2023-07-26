@@ -25,7 +25,7 @@ const router = createRouter({
         {
           name: 'plan',
           path: 'plan',
-          component: () => import('@/views/MainView.vue'),
+          component: () => import('@/views/SidebarViews/SidebarNotifications.vue'),
         },
         {
           name: 'search',
